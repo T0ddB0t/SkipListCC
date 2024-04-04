@@ -8,10 +8,6 @@
 
 using namespace std;
 
-const int maxStudent = 41;
-const int maxClass = 80; //is also the max lvl
-map<string, string> grades;
-
 template <class T>
 class SkipListNode{
 public:
@@ -20,7 +16,7 @@ public:
     SkipListNode **next;
 };
 
-template <class T>
+template <class T, int maxClass, int maxStudent>
 class SkipList{
 public:
     SkipList();
@@ -34,21 +30,21 @@ private:
     int powers[maxClass];
 };
 
-template <class T>
-SkipList<T>::SkipList(){
+template <class T, int maxClass, int maxStudent>
+SkipList<T, maxClass, maxStudent>::SkipList(){
     for(int i = 0; i < maxClass; i++)
         root[i] = 0;
 }
 
-template <class T>
-void SkipList<T>::choosePowers(){
+template <class T, int maxClass, int maxStudent>
+void SkipList<T, maxClass, maxStudent>::choosePowers(){
     powers[maxClass-1] = (2 << (maxClass-1)) - 1; //2^maxClass - 1
     for(int i = maxClass - 2, j = 0; i >= 0; i--, j++)
         powers[i] = powers[i+1] - (2 << j); //2 ^ (j+1)
 }
 
-template<class T>
-int SkipList<T>::chooseLevel(){
+template<class T, int maxClass, int maxStudent>
+int SkipList<T, maxClass, maxStudent>::chooseLevel(){
     int i, r = rand() % powers[maxClass-1] + 1;
     for(i = 1; i < maxClass; i++)
         if(r < powers[i])
@@ -56,8 +52,8 @@ int SkipList<T>::chooseLevel(){
     return i-1;
 }
 
-template<class T>
-T* SkipList<T>::skipListSearch(const T& key){
+template<class T, int maxClass, int maxStudent>
+T* SkipList<T, maxClass, maxStudent>::skipListSearch(const T& key){
     nodePtr prev, curr;
     int lvl;
     for(lvl = maxClass-1; lvl >= 0 && !root[lvl]; lvl--);
@@ -89,8 +85,8 @@ T* SkipList<T>::skipListSearch(const T& key){
     }
 }
 
-template <class T>
-void SkipList<T>::skipListInsert(const T& key){
+template <class T, int maxClass, int maxStudent>
+void SkipList<T, maxClass, maxStudent>::skipListInsert(const T& key){
     nodePtr curr[maxClass], prev[maxClass], newNode;
     int lvl, i;
     curr[maxClass-1] = root[maxClass-1];
@@ -116,7 +112,7 @@ void SkipList<T>::skipListInsert(const T& key){
     lvl = chooseLevel();
 
     newNode = new SkipListNode<T>;
-    newNode->next = new nodePtr[lvl + 1];
+    newNode->next = new nodePtr[sizeof(nodePtr) * (lvl + 1)];
     newNode->key = key;
 
     for(i = 0; i <= lvl; i++){
