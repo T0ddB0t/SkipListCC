@@ -1,6 +1,9 @@
-#include <iostream>
+#include "SkipList.h"
 #include <cstdlib>
 #include <ctime>
-#include "SkipList.h"
+#include <iostream>
 
- 
+int main() {
+  SkipList<map<int, int, char>, 41, 82> list;
+  int e = 2;
+}
