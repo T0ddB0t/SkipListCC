@@ -1,20 +1,13 @@
 #include <iostream>
 #include "SkipList.h"
-#include <limits>
+#include <memory>   
+
 
 class individuals {
 private:
-  map<int, string> students(int number, string name) {
-    map<int, string> student;
-    student.insert(pair<int, string>(number, name));
-    return student;
-  }
+  map<shared_ptr<int>, shared_ptr<string>> students;
 
-  map<int, string> classes(int number, string classes) {
-    map<int, string> period;
-    period.insert(pair<int, string>(number, classes));
-    return period;
-  }
+  map<shared_ptr<int>, shared_ptr<string>> classes;
 
   map<char, string> grades() {
     map<char, string> grades;
@@ -35,36 +28,44 @@ private:
     grades.insert(pair<char, string>('o', "F-"));
     return grades;
   }
+protected:
+//have to fix
+//idk what tf to do
+  void printMap(const map<shared_ptr<int>, shared_ptr<string>>& myMap) {
+      for (auto it = myMap.cbegin(); it != myMap.cend(); ++it) {
+          cout << *(it->first) << ", " << *(it->second) << endl;
+      }
+  } // might have ti change to unique pointers 
 public:
   void inserter(){
     int quit = 1;
-    string indiClass;
-    string name;
-    int rank;
+    shared_ptr<string> indiClass(new string);
+    shared_ptr<string> name(new string);
+    shared_ptr<int> rank(new int);
     int decision;
     while(quit == 1){
       cout << "what do you need to insert?" << endl;
-      cout << "Students: 1, Classes: 2, Quit: 0" << endl;
-      cout << "Using A+ thru F- Grading" << endl;
+      cout << "Students: 1, Classes: 2, Go Back: 0" << endl;
+      //cout << "Using A+ thru F- Grading" << endl;
       cin >> decision;
       cin.ignore();//std::numeric_limits<std::streamsize>::max(), '\n');
       switch(decision){
         case 1:
             cout << "Insert students here..." << endl;
             cout << "Name: ";
-            getline(cin, name);
+            cin >> *name;
             cout << "Rank: ";
-            cin >> rank;
-            students(rank, name);
+            cin >> *rank;
+            students.insert(pair<shared_ptr<int>, shared_ptr<string>>(rank, name));
             cout << "<<<Insert complete>>>" << endl;         
           break;
         case 2:
             cout << "Insert Classes here..." << endl;
             cout << "Class: ";
-            getline(cin, indiClass);
+            cin >> *indiClass;
             cout << "Rank: ";
-            cin >> rank;
-            classes(rank, indiClass);
+            cin >> *rank;
+            classes.insert(pair<shared_ptr<int>, shared_ptr<string>>(rank, indiClass));
             cout << "<<<Insert complete>>>" << endl;
           break;
         case 0:
@@ -77,22 +78,25 @@ public:
   }
   void printInfo(){
     int decision, quit = 1;
-    while(quit == 1){
+    while(quit != 0){
+      cout << "What info would you like to see?" << endl
+           << "1: Students 2: Classes 0: Go Back" << endl;
+      cin >> decision;
       switch(decision){
         case 1:
           cout << "<<<STUDENTS>>>" << endl;
-          cout << students << endl;
+          printMap(students);
           cout << "<<<END STUDENTS>>>" << endl;
           break;
         case 2:
           cout << "<<<CLASSES>>>" << endl;
-          cout << classes << endl;
+          printMap(classes);
           cout << "<<<END CLASSES>>>" << endl;
           break;
-        case 3:
-          cout << "<<<GRADES>>>" << endl;
-          cout << grades << endl;
-          cout << "<<<END GRADES" << endl;
+        // case 3:
+        //   cout << "<<<GRADES>>>" << endl;
+        //   cout << grades << endl;
+        //   cout << "<<<END GRADES" << endl;
           break;
         case 0:
           quit = 0;
@@ -102,5 +106,6 @@ public:
           break;
       }
     }
-  }
+   }
+  ~individuals(){};
 };
